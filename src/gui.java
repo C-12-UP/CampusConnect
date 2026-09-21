@@ -23,16 +23,9 @@ class GUI{
 
         JLabel label = new JLabel();
         label.setText("LOST & FOUND");
+        label.setForeground(Color.white);
         label.setVisible(true);
         dashboardJPanel.add(label);
-
-        JButton button = new JButton();
-        button.setText("Atomic");
-        button.setBackground(Color.GRAY);
-        button.setForeground(Color.CYAN);
-        button.setBounds(300,50, 100, 40);
-        //button.addActionListener(null);
-        mainPanel.add(button);
         
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 500);
