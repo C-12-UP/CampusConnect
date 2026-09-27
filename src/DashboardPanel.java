@@ -1,0 +1,157 @@
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+
+public class DashboardPanel extends JPanel {
+
+    private JButton lostItemsButton;
+    private JButton foundItemsButton;
+    private JButton claimedButton;
+
+    private JLabel lostCountLabel;
+    private JLabel foundCountLabel;
+    private JLabel claimedCountLabel;
+
+    // Where the recent-items list/table will go later
+    private JPanel recentItemsPanel;
+
+    private static final Color BG_COLOR = new Color(255, 231, 233);
+
+    public DashboardPanel() {
+        initComponents();
+    }
+
+    private void initComponents() {
+        setBackground(BG_COLOR);
+        setLayout(new BorderLayout(10, 10));
+        setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+
+        JPanel topSection = new JPanel();
+        topSection.setLayout(new BoxLayout(topSection, BoxLayout.Y_AXIS));
+        topSection.setBackground(BG_COLOR);
+
+        topSection.add(buildHeader());
+        topSection.add(Box.createVerticalStrut(15));
+        topSection.add(buildCardsRow());
+        topSection.add(Box.createVerticalStrut(15));
+
+        JLabel recentLabel = new JLabel("Recent Items");
+        recentLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        recentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        topSection.add(recentLabel);
+
+        recentItemsPanel = new JPanel();
+        recentItemsPanel.setBackground(Color.WHITE);
+
+        add(topSection, BorderLayout.NORTH);
+        add(recentItemsPanel, BorderLayout.CENTER);
+    }
+
+    private JPanel buildHeader() {
+        JPanel header = new JPanel(new BorderLayout());
+        header.setBackground(BG_COLOR);
+
+        JPanel titleBlock = new JPanel();
+        titleBlock.setLayout(new BoxLayout(titleBlock, BoxLayout.Y_AXIS));
+        titleBlock.setBackground(BG_COLOR);
+
+        JLabel titleLabel = new JLabel("DASHBOARD");
+        titleLabel.setFont(new Font("Trebuchet MS", Font.BOLD, 14));
+
+        JLabel subtitleLabel = new JLabel("Overview of lost & found item");
+        subtitleLabel.setFont(new Font("SansSerif", Font.PLAIN, 10));
+
+        titleBlock.add(titleLabel);
+        titleBlock.add(subtitleLabel);
+
+        JPanel profilePanel = new JPanel();
+        profilePanel.setBackground(new Color(255, 255, 204));
+        profilePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        JLabel profileLabel = new JLabel("Dhyay", loadIcon("Profile.png"), JLabel.CENTER);
+        profileLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
+        profilePanel.add(profileLabel);
+
+        header.add(titleBlock, BorderLayout.WEST);
+        header.add(profilePanel, BorderLayout.EAST);
+        return header;
+    }
+
+    private JPanel buildCardsRow() {
+        JPanel cardsRow = new JPanel(new GridLayout(1, 3, 15, 0));
+        cardsRow.setBackground(BG_COLOR);
+
+        lostItemsButton = new JButton("Lost Items");
+        lostCountLabel = new JLabel("COUNT: 000");
+        cardsRow.add(buildStatCard(lostItemsButton, "LostItem.png",
+                new Color(224, 102, 102), lostCountLabel));
+        lostItemsButton.addActionListener(this::lostItemsClicked);
+
+        foundItemsButton = new JButton("Found Items");
+        foundCountLabel = new JLabel("COUNT: 000");
+        cardsRow.add(buildStatCard(foundItemsButton, "FoundItem.png",
+                new Color(129, 199, 132), foundCountLabel));
+        foundItemsButton.addActionListener(this::foundItemsClicked);
+
+        claimedButton = new JButton("Claimed");
+        claimedCountLabel = new JLabel("COUNT: 000");
+        cardsRow.add(buildStatCard(claimedButton, "DClaimed.png",
+                new Color(255, 193, 7), claimedCountLabel));
+        claimedButton.addActionListener(this::claimedClicked);
+
+        return cardsRow;
+    }
+
+    private JPanel buildStatCard(JButton button, String iconFile, Color bgColor, JLabel countLabel) {
+        button.setIcon(loadIcon(iconFile));
+        button.setBackground(bgColor);
+        button.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        countLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        countLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        countLabel.setBorder(new BevelBorder(BevelBorder.RAISED));
+
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(BG_COLOR);
+        card.add(button);
+        card.add(Box.createVerticalStrut(8));
+        card.add(countLabel);
+        return card;
+    }
+
+    // Loads an icon from the "Images" folder under src.
+    private ImageIcon loadIcon(String fileName) {
+        java.net.URL url = getClass().getResource("/Images/" + fileName);
+        if (url == null) {
+            System.out.println("Warning: could not find icon " + fileName);
+            return null;
+        }
+        return new ImageIcon(url);
+    }
+
+    // --- Click handlers: fill these in as the pages/logic come together ---
+
+    private void lostItemsClicked(ActionEvent evt) {
+        System.out.println("Lost Items clicked");
+        // TODO: navigate to the Lost Items view
+    }
+
+    private void foundItemsClicked(ActionEvent evt) {
+        System.out.println("Found Items clicked");
+        // TODO: navigate to the Found Items view
+    }
+
+    private void claimedClicked(ActionEvent evt) {
+        System.out.println("Claimed clicked");
+        // TODO: navigate to the Claimed view
+    }
+
+    // TODO (later): add something like
+    //   public void updateCounts(ItemManager manager) {
+    //       lostCountLabel.setText("COUNT: " + manager.lostItem.size());
+    //       foundCountLabel.setText("COUNT: " + manager.foundItem.size());
+    //   }
+    // once ItemManager is wired in, so these numbers reflect real data.
+}

@@ -1,7 +1,27 @@
-import java.util.Scanner;
+//import java.util.Scanner;
+import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
+
+        // ===== GUI TEST MODE (active) =====
+        JFrame frame = new JFrame("LostFound");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(700, 500);
+
+        JDesktopPane desktop = new JDesktopPane();
+        frame.setContentPane(desktop);
+
+        SidebarPanel sidebar = new SidebarPanel();
+        sidebar.setVisible(true);
+        desktop.add(sidebar);
+
+        frame.setVisible(true);
+        // ===== END GUI TEST MODE =====
+
+
+        /* ===== ORIGINAL CONSOLE LOGIC (commented out for now) =====
+
         Scanner op = new Scanner(System.in);
         ItemManager manager = new ItemManager();
 
@@ -49,7 +69,8 @@ public class Main {
             System.out.print("How can we help you ");
         }
 
-        
         op.close();
+
+        ===== END ORIGINAL CONSOLE LOGIC ===== */
     }
 }
