@@ -1,4 +1,4 @@
-//import java.util.Scanner;
+import java.util.Scanner;
 import javax.swing.*;
 
 public class Main {
@@ -7,15 +7,14 @@ public class Main {
         // ===== GUI TEST MODE (active) =====
         JFrame frame = new JFrame("LostFound");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(700, 500);
-
-        JDesktopPane desktop = new JDesktopPane();
-        frame.setContentPane(desktop);
 
         SidebarPanel sidebar = new SidebarPanel();
-        sidebar.setVisible(true);
-        desktop.add(sidebar);
+        frame.setContentPane(sidebar);
 
+        // Sizes the window to exactly fit its contents' natural size,
+        // instead of guessing a pixel width/height by hand.
+        frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
         // ===== END GUI TEST MODE =====
 

@@ -24,7 +24,7 @@ import java.awt.event.MouseEvent;
 //     }
 // }
 
-public class SidebarPanel extends JInternalFrame {
+public class SidebarPanel extends JPanel {
 
     // Menu labels
     private JLabel titleLabel;
@@ -43,13 +43,15 @@ public class SidebarPanel extends JInternalFrame {
 
     // Card name constants — used both when adding pages and when switching to them
     private static final String DASHBOARD = "DASHBOARD";
+    private static final String REPORT_ITEM = "REPORT_ITEM";
 
     public SidebarPanel() {
         initComponents();
     }
 
     private void initComponents() {
-        setSize(650, 450);
+        // No setSize() needed anymore — this panel will be told its size
+        // by whatever container it's placed inside (the JFrame, in our case).
 
         // --- Sidebar setup ---
         JPanel sidebar = new JPanel();
@@ -125,13 +127,14 @@ public class SidebarPanel extends JInternalFrame {
         contentArea.setBackground(new Color(240, 240, 240));
 
         // Add each page here, giving it a name to switch to later.
-        // Only DashboardPanel exists so far — add the others as you build them.
+        // Add the remaining two (Browse Item, Claimed) once those panels exist.
         contentArea.add(new DashboardPanel(), DASHBOARD);
+        contentArea.add(new ReportItem(), REPORT_ITEM);
 
         // --- Put it together ---
-        getContentPane().setLayout(new BorderLayout());
-        getContentPane().add(sidebar, BorderLayout.WEST);
-        getContentPane().add(contentArea, BorderLayout.CENTER);
+        setLayout(new BorderLayout());
+        add(sidebar, BorderLayout.WEST);
+        add(contentArea, BorderLayout.CENTER);
     }
 
     private JLabel createMenuItem(String text, String iconFileName) {
@@ -163,8 +166,7 @@ public class SidebarPanel extends JInternalFrame {
     }
 
     private void reportItemClicked(MouseEvent evt) {
-        System.out.println("Report Item clicked");
-        // TODO: swap contentArea to the Report Item page
+        cardLayout.show(contentArea, REPORT_ITEM);
     }
 
     private void browseItemClicked(MouseEvent evt) {
