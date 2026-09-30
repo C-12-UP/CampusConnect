@@ -107,10 +107,16 @@ public class DashboardPanel extends JPanel {
         button.setIcon(loadIcon(iconFile));
         button.setBackground(bgColor);
         button.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        // Give the button a card-like height and let it stretch to the card's width
+        button.setPreferredSize(new Dimension(139, 60));
+        button.setMaximumSize(new Dimension(Integer.MAX_VALUE, 60));
+        button.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         countLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
         countLabel.setHorizontalAlignment(SwingConstants.CENTER);
         countLabel.setBorder(new BevelBorder(BevelBorder.RAISED));
+        countLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        countLabel.setMaximumSize(new Dimension(Integer.MAX_VALUE, countLabel.getPreferredSize().height));
 
         JPanel card = new JPanel();
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));

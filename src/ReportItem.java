@@ -59,53 +59,44 @@ public class ReportItem extends javax.swing.JPanel {
     }
 
     private JPanel buildForm() {
-        JPanel form = new JPanel();
-        form.setLayout(new BoxLayout(form, BoxLayout.Y_AXIS));
+        JPanel form = new JPanel(new GridBagLayout());
         form.setBackground(new Color(255, 238, 224));
         form.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        // Row 1: Item Name + Category
-        JPanel row1 = new JPanel(new GridLayout(1, 2, 20, 0));
-        row1.setBackground(form.getBackground());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.anchor = GridBagConstraints.NORTHWEST;
 
+        // Row 0: Item Name + Category
         itemNameField = new JTextField("eg: Calculator");
         itemNameField.setBorder(BorderFactory.createEtchedBorder());
-        row1.add(buildFieldBlock("Item Name*", itemNameField));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.5; gbc.insets = new Insets(0, 0, 15, 20);
+        form.add(buildFieldBlock("Item Name*", itemNameField), gbc);
 
         categoryCombo = new JComboBox<>(new String[]{"Item 1", "Item 2", "Item 3", "Item 4"});
-        row1.add(buildFieldBlock("Category*", categoryCombo));
+        gbc.gridx = 1; gbc.gridy = 0; gbc.insets = new Insets(0, 0, 15, 0);
+        form.add(buildFieldBlock("Category*", categoryCombo), gbc);
 
-        // Without this, BoxLayout stretches this row to fill any leftover
-        // vertical space in the window, and GridLayout then stretches every
-        // field inside it to match — same underlying issue as the description
-        // box earlier, just the opposite direction (too tall instead of too narrow).
-        row1.setMaximumSize(new Dimension(Integer.MAX_VALUE, row1.getPreferredSize().height));
-
-        // Row 2: Location Found + Date
-        JPanel row2 = new JPanel(new GridLayout(1, 2, 20, 0));
-        row2.setBackground(form.getBackground());
-
+        // Row 1: Location Found + Date
         locationField = new JTextField("eg: Library, etc");
-        row2.add(buildFieldBlock("Location Found*", locationField));
+        gbc.gridx = 0; gbc.gridy = 1; gbc.insets = new Insets(0, 0, 15, 20);
+        form.add(buildFieldBlock("Location Found*", locationField), gbc);
 
         dateSpinner = new JSpinner(new SpinnerDateModel(new Date(), null, null, java.util.Calendar.DAY_OF_MONTH));
         dateSpinner.setEditor(new JSpinner.DateEditor(dateSpinner, "dd-MM-yyyy"));
-        row2.add(buildFieldBlock("Date*", dateSpinner));
+        gbc.gridx = 1; gbc.gridy = 1; gbc.insets = new Insets(0, 0, 15, 0);
+        form.add(buildFieldBlock("Date*", dateSpinner), gbc);
 
-        row2.setMaximumSize(new Dimension(Integer.MAX_VALUE, row2.getPreferredSize().height));
-
-        // Row 3: Description
+        // Row 2: Description — spans BOTH columns, so it stretches across the full width
         descriptionArea = new JTextArea(5, 20);
         descriptionArea.setText("Any detail (brand, color, etc)");
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
         JScrollPane descriptionScroll = new JScrollPane(descriptionArea);
-        // Without this, BoxLayout uses the scroll pane's default maximum size
-        // (basically its preferred size) and refuses to stretch it horizontally.
-        descriptionScroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, 150));
-        JPanel row3 = buildFieldBlock("Description*", descriptionScroll);
+        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 15, 0);
+        form.add(buildFieldBlock("Description*", descriptionScroll), gbc);
 
-        // Row 4: Status toggle + Submit
+        // Row 3: Status toggle + Submit — also spans both columns
         JPanel row4 = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         row4.setBackground(form.getBackground());
 
@@ -132,16 +123,15 @@ public class ReportItem extends javax.swing.JPanel {
         row4.add(foundToggle);
         row4.add(submitButton);
 
-        form.add(row1);
-        form.add(Box.createVerticalStrut(15));
-        form.add(row2);
-        form.add(Box.createVerticalStrut(15));
-        form.add(row3);
-        form.add(Box.createVerticalStrut(15));
-        form.add(row4);
-        // Absorbs any extra vertical space at the bottom instead of letting
-        // BoxLayout spread it out between the rows above.
-        form.add(Box.createVerticalGlue());
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 0, 0);
+        form.add(row4, gbc);
+
+        // Row 4: invisible filler — absorbs any leftover vertical space here,
+        // instead of the rows above stretching to fill it.
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.weighty = 1.0;
+        gbc.fill = GridBagConstraints.BOTH;
+        form.add(new JPanel() {{ setOpaque(false); }}, gbc);
 
         return form;
     }
@@ -156,14 +146,13 @@ public class ReportItem extends javax.swing.JPanel {
         label.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         field.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // Lets the field stretch to match whatever width GridBagLayout gives
+        // this block, while keeping its natural (non-stretched) height.
+        field.setMaximumSize(new Dimension(Integer.MAX_VALUE, field.getPreferredSize().height));
 
         block.add(label);
         block.add(Box.createVerticalStrut(5));
         block.add(field);
-
-        // Let this block stretch to fill the form's width, capped at its own
-        // natural height — same BoxLayout gotcha as above.
-        block.setMaximumSize(new Dimension(Integer.MAX_VALUE, block.getPreferredSize().height));
         return block;
     }
 
