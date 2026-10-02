@@ -12,7 +12,11 @@ public class ClaimedItem extends JPanel {
     private JPanel profilePanel;
     private JPanel claimedPanel;
 
-    public ClaimedItem() {
+    private ItemManager itemManager;
+
+    public ClaimedItem(ItemManager itemManager) {
+
+        this.itemManager = itemManager;
 
         // Main panel
         setBackground(Color.WHITE);

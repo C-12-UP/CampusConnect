@@ -13,10 +13,16 @@ import java.util.function.Supplier;
 public class SidebarPanel extends JPanel {
 
     // Card names
+    //Here we are creating an secret code type of thing which will be used to open the page. 
+    // This is necessary because we are using CardLayout which needs a name to open the page.
+    // It also requires less memory as opening it directly.
+    // Java is smart and does most of the linking work , and for it to trace we have specified it in addPage
     private static final String DASHBOARD    = "DASHBOARD";
     private static final String REPORT_ITEM  = "REPORT_ITEM";
     private static final String BROWSE_ITEM  = "BROWSE_ITEM";
     private static final String CLAIMED_ITEM = "CLAIMED_ITEM";
+
+    //private ItemManager itemManager ; //= new ItemManager();
 
     // Look & feel
     private static final Color SIDEBAR_BG   = new Color(102, 215, 33);
@@ -29,8 +35,11 @@ public class SidebarPanel extends JPanel {
     private final JPanel contentArea = new JPanel(cardLayout);
     private final Map<String, JLabel> menuItems = new LinkedHashMap<>();
     private String activeCard;
+    private ItemManager itemManager;
 
-    public SidebarPanel() {
+
+    public SidebarPanel(ItemManager itemManager) {
+        this.itemManager = itemManager;
         initComponents();
     }
 
@@ -39,10 +48,14 @@ public class SidebarPanel extends JPanel {
 
         // ---------- Content area ----------
         contentArea.setBackground(CONTENT_BG);
+        //addPage means add a new page to the content area.
+        //DASHBOARD is like the name of the page which we have defined above, here it means that open this page
+        //DashboardPanel is the class name which is getting open 
+        //:: new means that create that thing when it is needed 
         addPage(DASHBOARD,    DashboardPanel::new);
-        addPage(REPORT_ITEM,  ReportItem::new);
-        addPage(BROWSE_ITEM,  BrowseItem::new);
-        addPage(CLAIMED_ITEM, ClaimedItem::new);
+        addPage(REPORT_ITEM, () -> new ReportItem(itemManager));
+        addPage(BROWSE_ITEM, () -> new BrowseItem(itemManager));
+        addPage(CLAIMED_ITEM, () -> new ClaimedItem(itemManager));
 
         // ---------- Sidebar ----------
         JPanel sidebar = new JPanel();
@@ -76,6 +89,7 @@ public class SidebarPanel extends JPanel {
 
         // Start on Report Item
         showCard(REPORT_ITEM);
+
     }
 
     // =========================
@@ -86,6 +100,9 @@ public class SidebarPanel extends JPanel {
     private void addPage(String name, Supplier<? extends Component> factory) {
         Component page;
         try {
+            // page is the place where java stores newly made screens 
+            // factory is the variable which is used to create the page when it is needed (DASHBOARD, etc.)
+            // .get() is the function which is used to create the page when it is needed (DASHBOARD, etc.)
             page = factory.get();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -94,13 +111,16 @@ public class SidebarPanel extends JPanel {
         contentArea.add(page, name);
     }
 
+    //This function is used to create a error page when the page is not loaded properly or if there is an error in the page.
     private JPanel createErrorPage(String name, Throwable t) {
+        //This thing creates a panel which is created in case if the panel required is not loded ,to prevent an error from hapenning
         JPanel panel = new JPanel(new GridBagLayout());
+        // Background se set to match the color of the content area so that it doesn't look like aomething wrong
         panel.setBackground(CONTENT_BG);
         JLabel msg = new JLabel(
                 "<html><div style='text-align:center'>Could not load page: " + name
                 + "<br>" + t.getClass().getSimpleName() + "</div></html>");
-        msg.setForeground(Color.RED.darker());
+        msg.setForeground(Color.RED.darker());// This just makes the warning message of dark red color
         panel.add(msg);
         return panel;
     }
@@ -179,9 +199,9 @@ public class SidebarPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("VIVIDA");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new SidebarPanel());
+            frame.setContentPane(new SidebarPanel(new ItemManager()));
             frame.setSize(950, 600);
-            frame.setLocationRelativeTo(null);
+            frame.setLocationRelativeTo(null);  
             frame.setVisible(true);
         });
     }

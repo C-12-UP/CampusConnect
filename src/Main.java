@@ -8,7 +8,10 @@ public class Main {
         JFrame frame = new JFrame("LostFound"); 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
  
-        SidebarPanel sidebar = new SidebarPanel(); 
+        //ItemManager itemManager = new ItemManager();
+        
+        ItemManager manager = new ItemManager(); 
+        SidebarPanel sidebar = new SidebarPanel(manager); 
 
         frame.setContentPane(sidebar); 
  
@@ -22,9 +25,10 @@ public class Main {
  
         /* ===== ORIGINAL CONSOLE LOGIC (commented out for now) ===== 
  
-        Scanner op = new Scanner(System.in); 
-        ItemManager manager = new ItemManager(); 
+        Scanner op = new Scanner(System.in);*/
+
  
+        /* 
         int choice; 
         System.out.println("Specify whether you found something or lost. "); 
         choice =op.nextInt(); 

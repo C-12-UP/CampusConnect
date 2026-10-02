@@ -1,5 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
+import java.sql.Date;
 
 public class BrowseItem extends JPanel {
 
@@ -11,14 +12,18 @@ public class BrowseItem extends JPanel {
     private JTextField searchField;
     private JComboBox<String> categoryBox;
 
+    private ItemManager itemManager;
+
     private JPanel headerPanel;
     private JPanel titlePanel;
     private JPanel profilePanel;
-    private JPanel searchPanel;
-    private JPanel categoryPanel;
+    //private JPanel searchPanel;
+    //private JPanel categoryPanel;
     private JPanel itemPanel;
 
-    public BrowseItem() {
+    public BrowseItem(ItemManager itemManager) {
+
+        this.itemManager = itemManager;
 
         // Main panel
         setBackground(Color.WHITE);
@@ -114,10 +119,9 @@ public class BrowseItem extends JPanel {
         // =========================
 
         itemPanel = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(itemPanel, BoxLayout.Y_AXIS);
         itemPanel.setBackground(new Color(255, 218, 235));
-
-        // For now it is empty.
-        // Later you can add Lost/Found item cards here.
+        itemPanel.setLayout(boxLayout);   
 
         // =========================
         // ADD TO MAIN PANEL
@@ -147,7 +151,44 @@ public class BrowseItem extends JPanel {
         });
 
         categoryBox.addActionListener(e -> categorySelected());
+
+        displayItems();
+        
     }
+
+     private void displayItems() {
+
+        itemPanel.removeAll();
+
+        if (itemManager != null) {
+
+            for (LostItem item : itemManager.lostItem) {
+
+                JPanel itemCard = new JPanel();
+                itemCard.setLayout(new BoxLayout(itemCard, BoxLayout.Y_AXIS));
+
+                JLabel nameLabel = new JLabel("Name: " + item.itemName);
+                JLabel category = new JLabel("Type: " + item.category);
+                JLabel locationf = new JLabel("Location: " + item.locationFound);
+                JLabel datE = new JLabel("Date: " + item.date);
+                JLabel descriptioN = new JLabel("Description: " + item.description);
+                JLabel itemid = new JLabel("ItemId: " + item.itemId);
+
+                itemCard.add(nameLabel);
+                itemCard.add(category);
+                itemCard.add(locationf);
+                itemCard.add(datE);
+                itemCard.add(descriptioN);
+                itemCard.add(itemid);
+
+                itemPanel.add(itemCard);
+            }
+        }
+
+        itemPanel.revalidate();
+        itemPanel.repaint();
+    }
+
 
     // =========================
     // EVENT METHODS
@@ -198,7 +239,7 @@ public class BrowseItem extends JPanel {
 
             frame.setLocationRelativeTo(null);
 
-            frame.setContentPane(new BrowseItem());
+            frame.setContentPane(new BrowseItem(null));
 
             frame.setVisible(true);
         });

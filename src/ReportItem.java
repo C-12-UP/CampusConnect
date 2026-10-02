@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
+import java.awt.event.ActionEvent;                  
 import java.util.Date;
 
 public class ReportItem extends javax.swing.JPanel {
@@ -15,9 +15,12 @@ public class ReportItem extends javax.swing.JPanel {
     private JToggleButton foundToggle;
     private JButton submitButton;
 
+    private ItemManager itemManager;
+
     private static final Color BG_COLOR = new Color(255, 231, 233);
 
-    public ReportItem() {
+    public ReportItem(ItemManager itemManager) {
+        this.itemManager = itemManager;
         initComponents();
     }
 
