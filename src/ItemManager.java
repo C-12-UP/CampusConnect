@@ -3,6 +3,7 @@ import java.util.ArrayList;
 // Manages the lists of lost items
 public class ItemManager {
 
+    int nextItemId = 1; // Unique ID for each item
     /* ArrayList is the list of array, 
        LostItem is the data type of the list,
        lostItem is the object name (just like Scanner),
@@ -14,6 +15,9 @@ public class ItemManager {
 
     void addLostItem(LostItem item) 
     {
+        item.itemId = nextItemId;
+        nextItemId++;
+
         lostItem.add(item);
     }
 
@@ -22,6 +26,9 @@ public class ItemManager {
 
     void addFoundItem(FoundItem item)
     {
+        item.itemId = nextItemId;
+        nextItemId++;
+
         foundItem.add(item);
     }
 }

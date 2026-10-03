@@ -5,6 +5,8 @@ import java.awt.event.ActionEvent;
 
 public class DashboardPanel extends JPanel {
 
+    private ItemManager itemManager;
+
     private JButton lostItemsButton;
     private JButton foundItemsButton;
     private JButton claimedButton;
@@ -18,7 +20,8 @@ public class DashboardPanel extends JPanel {
 
     private static final Color BG_COLOR = new Color(255, 231, 233);
 
-    public DashboardPanel() {
+    public DashboardPanel(ItemManager itemManager) {
+        this.itemManager = itemManager;
         initComponents();
     }
 
@@ -154,10 +157,10 @@ public class DashboardPanel extends JPanel {
         // TODO: navigate to the Claimed view
     }
 
-    // TODO (later): add something like
-    //   public void updateCounts(ItemManager manager) {
-    //       lostCountLabel.setText("COUNT: " + manager.lostItem.size());
-    //       foundCountLabel.setText("COUNT: " + manager.foundItem.size());
-    //   }
-    // once ItemManager is wired in, so these numbers reflect real data.
+    public void updateCounts() {
+
+        lostCountLabel.setText("COUNT: " + itemManager.lostItem.size());
+        foundCountLabel.setText("COUNT: " + itemManager.foundItem.size());
+        //claimedCountLabel.setText("COUNT: " + itemManager.claimedItem.size());
+    }
 }

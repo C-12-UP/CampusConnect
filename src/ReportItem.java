@@ -176,8 +176,18 @@ public class ReportItem extends javax.swing.JPanel {
         String description = descriptionArea.getText();
         String status = lostToggle.isSelected() ? "LOST" : "FOUND";
 
-        System.out.println("Submit clicked -> " + name + ", " + category + ", "
-                + location + ", " + date + ", status=" + status);
-        // TODO: build a LostItem/FoundItem from these values and hand it to ItemManager
+        //System.out.println("Submit clicked -> " + name + ", " + category + ", "
+        //        + location + ", " + date + ", status=" + status);
+        // TD: build a LostItem/FoundItem from these values and hand it to ItemManager
+        if(status.equals("LOST")) {
+            LostItem lostItem = new LostItem(name, category, location, date, description );
+            itemManager.addLostItem(lostItem);
+        } else {
+            FoundItem foundItem = new FoundItem(name, category, location, date, description);
+            itemManager.addFoundItem(foundItem);
+        }
+        //System.out.println("Lost items: " + itemManager.lostItem.size());
+        //System.out.println("Found items: " + itemManager.foundItem.size());
     }
+
 }

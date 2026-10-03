@@ -156,13 +156,35 @@ public class BrowseItem extends JPanel {
         
     }
 
-     private void displayItems() {
+     public void displayItems() {
 
         itemPanel.removeAll();
 
         if (itemManager != null) {
 
             for (LostItem item : itemManager.lostItem) {
+
+                JPanel itemCard = new JPanel();
+                itemCard.setLayout(new BoxLayout(itemCard, BoxLayout.Y_AXIS));
+
+                JLabel nameLabel = new JLabel("Name: " + item.itemName);
+                JLabel category = new JLabel("Type: " + item.category);
+                JLabel locationf = new JLabel("Location: " + item.locationFound);
+                JLabel datE = new JLabel("Date: " + item.date);
+                JLabel descriptioN = new JLabel("Description: " + item.description);
+                JLabel itemid = new JLabel("ItemId: " + item.itemId);
+
+                itemCard.add(nameLabel);
+                itemCard.add(category);
+                itemCard.add(locationf);
+                itemCard.add(datE);
+                itemCard.add(descriptioN);
+                itemCard.add(itemid);
+
+                itemPanel.add(itemCard);
+            }
+
+            for (FoundItem item : itemManager.foundItem) {
 
                 JPanel itemCard = new JPanel();
                 itemCard.setLayout(new BoxLayout(itemCard, BoxLayout.Y_AXIS));

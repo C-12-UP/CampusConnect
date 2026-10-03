@@ -6,8 +6,9 @@ public class LostItem extends Item {
     }
 
     LostItem(String itemName, String category, String locationFound,
-             java.util.Date date, String description, int itemId) {
+             java.util.Date date, String description) {
 
-        super(itemName, category, locationFound, date, description, itemId);
+        super(itemName, category, locationFound, date, description);
+
     }
 }

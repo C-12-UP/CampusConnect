@@ -36,6 +36,8 @@ public class SidebarPanel extends JPanel {
     private final Map<String, JLabel> menuItems = new LinkedHashMap<>();
     private String activeCard;
     private ItemManager itemManager;
+    private BrowseItem browseItem;
+    private DashboardPanel dashboardPanel;
 
 
     public SidebarPanel(ItemManager itemManager) {
@@ -52,9 +54,15 @@ public class SidebarPanel extends JPanel {
         //DASHBOARD is like the name of the page which we have defined above, here it means that open this page
         //DashboardPanel is the class name which is getting open 
         //:: new means that create that thing when it is needed 
-        addPage(DASHBOARD,    DashboardPanel::new);
+        addPage(DASHBOARD, () -> {
+            dashboardPanel = new DashboardPanel(itemManager);
+            return dashboardPanel;
+        });
         addPage(REPORT_ITEM, () -> new ReportItem(itemManager));
-        addPage(BROWSE_ITEM, () -> new BrowseItem(itemManager));
+        addPage(BROWSE_ITEM, () -> {
+            browseItem = new BrowseItem(itemManager);
+            return browseItem;
+        });
         addPage(CLAIMED_ITEM, () -> new ClaimedItem(itemManager));
 
         // ---------- Sidebar ----------
@@ -162,10 +170,21 @@ public class SidebarPanel extends JPanel {
     }
 
     private void showCard(String card) {
+        if (card.equals(DASHBOARD) && dashboardPanel != null) {
+            dashboardPanel.updateCounts();
+        }
+    
+        if (card.equals(BROWSE_ITEM) && browseItem != null) {
+            browseItem.displayItems();
+        }
+
         cardLayout.show(contentArea, card);
         activeCard = card;
+
         menuItems.forEach((name, label) ->
-                label.setBackground(name.equals(card) ? ACTIVE_BG : SIDEBAR_BG));
+            label.setBackground(
+                name.equals(card) ? ACTIVE_BG : SIDEBAR_BG
+            ));
     }
 
     // =========================

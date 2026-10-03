@@ -16,13 +16,12 @@ public class Item {
         // As if there are no constructor java creates one on it own, which can call an bydefault constructor which might give garbage value.
     }
 
-    Item(String itemName, String category, String locationFound, Date date, String description, int itemId) {
+    Item(String itemName, String category, String locationFound, Date date, String description ) {
         this.itemName = itemName;
         this.category = category;
         this.locationFound = locationFound;
         this.date = date;
         this.description = description;
-        this.itemId = itemId;
 
     /* 
     void InputItem(Scanner op) {
