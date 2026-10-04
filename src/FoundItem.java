@@ -7,9 +7,9 @@ public class FoundItem extends Item {
     String foundDate;
     String finderContact;
 
-    public FoundItem(String name, String category, String location, Date date, String description) {
+    public FoundItem(String name, String category, String location, Date date, String description, String reporterName, String contactInfo) {
         
-        super(name, category, location, date, description);
+        super(name, category, location, date, description, reporterName, contactInfo);
     }
 
     void InputFoundItem(Scanner op) {

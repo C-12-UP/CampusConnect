@@ -10,6 +10,8 @@ public class ReportItem extends javax.swing.JPanel {
     private JTextField locationField;
     private JSpinner dateSpinner;
     private JTextArea descriptionArea;
+    private JTextField reporterNameField;
+    private JTextField contactField;
 
     private JToggleButton lostToggle;
     private JToggleButton foundToggle;
@@ -90,16 +92,25 @@ public class ReportItem extends javax.swing.JPanel {
         gbc.gridx = 1; gbc.gridy = 1; gbc.insets = new Insets(0, 0, 15, 0);
         form.add(buildFieldBlock("Date*", dateSpinner), gbc);
 
-        // Row 2: Description — spans BOTH columns, so it stretches across the full width
+        // Row 2: Reporter name + Contact (NEW)
+        reporterNameField = new JTextField();
+        gbc.gridx = 0; gbc.gridy = 2; gbc.insets = new Insets(0, 0, 15, 20);
+        form.add(buildFieldBlock("Your Name*", reporterNameField), gbc);
+
+        contactField = new JTextField();
+        gbc.gridx = 1; gbc.gridy = 2; gbc.insets = new Insets(0, 0, 15, 0);
+        form.add(buildFieldBlock("Contact (phone/email)*", contactField), gbc);
+
+        // Row 3: Description — spans BOTH columns, so it stretches across the full width
         descriptionArea = new JTextArea(5, 20);
         descriptionArea.setText("Any detail (brand, color, etc)");
         descriptionArea.setLineWrap(true);
         descriptionArea.setWrapStyleWord(true);
         JScrollPane descriptionScroll = new JScrollPane(descriptionArea);
-        gbc.gridx = 0; gbc.gridy = 2; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 15, 0);
+        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 15, 0);
         form.add(buildFieldBlock("Description*", descriptionScroll), gbc);
 
-        // Row 3: Status toggle + Submit — also spans both columns
+        // Row 4: Status toggle + Submit — also spans both columns
         JPanel row4 = new JPanel(new FlowLayout(FlowLayout.LEFT, 20, 10));
         row4.setBackground(form.getBackground());
 
@@ -126,12 +137,12 @@ public class ReportItem extends javax.swing.JPanel {
         row4.add(foundToggle);
         row4.add(submitButton);
 
-        gbc.gridx = 0; gbc.gridy = 3; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 0, 0);
+        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2; gbc.insets = new Insets(0, 0, 0, 0);
         form.add(row4, gbc);
 
-        // Row 4: invisible filler — absorbs any leftover vertical space here,
+        // Row 5: invisible filler — absorbs any leftover vertical space here,
         // instead of the rows above stretching to fill it.
-        gbc.gridx = 0; gbc.gridy = 4; gbc.gridwidth = 2;
+        gbc.gridx = 0; gbc.gridy = 5; gbc.gridwidth = 2;
         gbc.weighty = 1.0;
         gbc.fill = GridBagConstraints.BOTH;
         form.add(new JPanel() {{ setOpaque(false); }}, gbc);
@@ -176,14 +187,19 @@ public class ReportItem extends javax.swing.JPanel {
         String description = descriptionArea.getText();
         String status = lostToggle.isSelected() ? "LOST" : "FOUND";
 
+        // NEW: read the reporter details. Not passed to the constructors yet,
+        // because Item / LostItem / FoundItem don't have these fields yet.
+        String reporterName = reporterNameField.getText();
+        String contact = contactField.getText();
+
         //System.out.println("Submit clicked -> " + name + ", " + category + ", "
         //        + location + ", " + date + ", status=" + status);
         // TD: build a LostItem/FoundItem from these values and hand it to ItemManager
         if(status.equals("LOST")) {
-            LostItem lostItem = new LostItem(name, category, location, date, description );
+            LostItem lostItem = new LostItem(name, category, location, date, description, reporterName, contact);
             itemManager.addLostItem(lostItem);
         } else {
-            FoundItem foundItem = new FoundItem(name, category, location, date, description);
+            FoundItem foundItem = new FoundItem(name, category, location, date, description, reporterName, contact);
             itemManager.addFoundItem(foundItem);
         }
         //System.out.println("Lost items: " + itemManager.lostItem.size());

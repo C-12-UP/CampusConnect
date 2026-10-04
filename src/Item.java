@@ -10,18 +10,23 @@ public class Item {
     Date date;
     String description;
     int itemId;
+    String reporterName;
+    String contactInfo;
 
     Item() {
         //Its an empty default constructor which is there.
         // As if there are no constructor java creates one on it own, which can call an bydefault constructor which might give garbage value.
     }
 
-    Item(String itemName, String category, String locationFound, Date date, String description ) {
-        this.itemName = itemName;
-        this.category = category;
-        this.locationFound = locationFound;
-        this.date = date;
-        this.description = description;
+    Item(String itemName, String category, String locationFound, Date date,
+     String description, String reporterName, String contactInfo) {
+    this.itemName = itemName;
+    this.category = category;
+    this.locationFound = locationFound;
+    this.date = date;
+    this.description = description;
+    this.reporterName = reporterName;
+    this.contactInfo = contactInfo;
 
     /* 
     void InputItem(Scanner op) {

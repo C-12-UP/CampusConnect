@@ -1,6 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 public class BrowseItem extends JPanel {
 
@@ -13,6 +13,8 @@ public class BrowseItem extends JPanel {
     private JComboBox<String> categoryBox;
 
     private ItemManager itemManager;
+
+    private final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
 
     private JPanel headerPanel;
     private JPanel titlePanel;
@@ -119,16 +121,18 @@ public class BrowseItem extends JPanel {
         // =========================
 
         itemPanel = new JPanel();
+        itemPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         BoxLayout boxLayout = new BoxLayout(itemPanel, BoxLayout.Y_AXIS);
         itemPanel.setBackground(new Color(255, 218, 235));
-        itemPanel.setLayout(boxLayout);   
+        itemPanel.setLayout(boxLayout);
 
         // =========================
         // ADD TO MAIN PANEL
         // =========================
 
         add(topSection, BorderLayout.NORTH);
-        add(itemPanel, BorderLayout.CENTER);
+        //add(itemPanel, BorderLayout.CENTER);
+        add(new JScrollPane(itemPanel), BorderLayout.CENTER);
 
         // =========================
         // EVENTS
@@ -153,57 +157,21 @@ public class BrowseItem extends JPanel {
         categoryBox.addActionListener(e -> categorySelected());
 
         displayItems();
-        
+
     }
 
-     public void displayItems() {
+    public void displayItems() {
 
         itemPanel.removeAll();
 
         if (itemManager != null) {
 
             for (LostItem item : itemManager.lostItem) {
-
-                JPanel itemCard = new JPanel();
-                itemCard.setLayout(new BoxLayout(itemCard, BoxLayout.Y_AXIS));
-
-                JLabel nameLabel = new JLabel("Name: " + item.itemName);
-                JLabel category = new JLabel("Type: " + item.category);
-                JLabel locationf = new JLabel("Location: " + item.locationFound);
-                JLabel datE = new JLabel("Date: " + item.date);
-                JLabel descriptioN = new JLabel("Description: " + item.description);
-                JLabel itemid = new JLabel("ItemId: " + item.itemId);
-
-                itemCard.add(nameLabel);
-                itemCard.add(category);
-                itemCard.add(locationf);
-                itemCard.add(datE);
-                itemCard.add(descriptioN);
-                itemCard.add(itemid);
-
-                itemPanel.add(itemCard);
+                itemPanel.add(createItemCard(item));
             }
 
             for (FoundItem item : itemManager.foundItem) {
-
-                JPanel itemCard = new JPanel();
-                itemCard.setLayout(new BoxLayout(itemCard, BoxLayout.Y_AXIS));
-
-                JLabel nameLabel = new JLabel("Name: " + item.itemName);
-                JLabel category = new JLabel("Type: " + item.category);
-                JLabel locationf = new JLabel("Location: " + item.locationFound);
-                JLabel datE = new JLabel("Date: " + item.date);
-                JLabel descriptioN = new JLabel("Description: " + item.description);
-                JLabel itemid = new JLabel("ItemId: " + item.itemId);
-
-                itemCard.add(nameLabel);
-                itemCard.add(category);
-                itemCard.add(locationf);
-                itemCard.add(datE);
-                itemCard.add(descriptioN);
-                itemCard.add(itemid);
-
-                itemPanel.add(itemCard);
+                itemPanel.add(createItemCard(item));
             }
         }
 
@@ -211,6 +179,44 @@ public class BrowseItem extends JPanel {
         itemPanel.repaint();
     }
 
+    private JPanel createItemCard(Item item) {
+
+        JPanel itemCard = new JPanel();
+        String status = null;
+        itemCard.setLayout(new BoxLayout(itemCard, BoxLayout.Y_AXIS));
+        JLabel statusLabel;                       
+        if (item instanceof LostItem) {
+            statusLabel = new JLabel("LOST");     // 2. only assigned inside (no "JLabel" word)
+            statusLabel.setForeground(Color.RED);
+        } else {
+            statusLabel = new JLabel("FOUND");
+            statusLabel.setForeground(new Color(0, 102, 0));
+        }
+
+        itemCard.add(statusLabel);
+
+        itemCard.add(new JLabel("Name: " + item.itemName));
+        itemCard.add(new JLabel("Type: " + item.category));
+        itemCard.add(new JLabel("Location: " + item.locationFound));
+        itemCard.add(new JLabel("Date: " + fmt.format(item.date)));
+        itemCard.add(new JLabel("Description: " + item.description));
+        itemCard.add(new JLabel("ItemId: " + item.itemId));
+        itemCard.add(new JLabel("Reported by: " + item.reporterName));
+        itemCard.add(new JLabel("Contact: " + item.contactInfo));
+
+        itemCard.setBorder(BorderFactory.createCompoundBorder
+        (
+            BorderFactory.createLineBorder(new Color(200,200,200)),
+            BorderFactory.createEmptyBorder(10,12,10,12))
+        );
+        itemCard.setBackground(Color.WHITE);
+
+        itemCard.setAlignmentX(JPanel.LEFT_ALIGNMENT);
+        itemCard.setMaximumSize(new Dimension(Integer.MAX_VALUE, itemCard.getPreferredSize().height));
+        itemPanel.add(Box.createVerticalStrut(10));
+
+        return itemCard;
+    }
 
     // =========================
     // EVENT METHODS

@@ -144,17 +144,17 @@ public class DashboardPanel extends JPanel {
 
     private void lostItemsClicked(ActionEvent evt) {
         System.out.println("Lost Items clicked");
-        // TODO: navigate to the Lost Items view
+        ((CardLayout) getRootPane().getLayout()).show(getRootPane(), "LostItems");
     }
 
     private void foundItemsClicked(ActionEvent evt) {
         System.out.println("Found Items clicked");
-        // TODO: navigate to the Found Items view
+        ((CardLayout) getRootPane().getLayout()).show(getRootPane(), "FoundItems");
     }
 
     private void claimedClicked(ActionEvent evt) {
         System.out.println("Claimed clicked");
-        // TODO: navigate to the Claimed view
+        //((CardLayout) getRootPane().getLayout()).show(getRootPane(), "Claimed");
     }
 
     public void updateCounts() {
