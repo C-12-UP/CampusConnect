@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sign In</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,500;1,500&display=swap">
+<link rel="stylesheet" href="{% static 'accounts/login.css' %}">
+<script src="{% static 'accounts/login.js' %}" defer></script>
+</head>
+<body>
+<main class="page{% if not form.non_field_errors %} off{% endif %}">
+  <section class="card">
+
+    <!-- LEFT: lamp -->
+    <div class="visual">
+      <p class="label"><span class="dot"></span>YOUR SPACE, YOUR PACE</p>
+      <div class="lamp-area">
+        <div class="lamp">
+          <svg class="cast" viewBox="-50 -30 300 180" aria-hidden="true">
+            <defs>
+              <radialGradient id="pool"><stop offset="0" style="stop-color:rgb(var(--glow));stop-opacity:.75"/><stop offset="1" style="stop-color:rgb(var(--glow));stop-opacity:0"/></radialGradient>
+              <mask id="cm" maskUnits="userSpaceOnUse" x="-50" y="-30" width="300" height="180">
+                <rect x="-50" y="-30" width="300" height="180" fill="#fff"/><g style="color:#000"><use href="#dark"/></g>
+              </mask>
+            </defs>
+            <ellipse cx="100" cy="62" rx="145" ry="85" fill="url(#pool)" mask="url(#cm)"/>
+          </svg>
+          <div class="glow"></div>
+          <div class="beam"></div>
+          <svg class="shade" viewBox="0 0 200 120" aria-hidden="true">
+            <defs>
+              <linearGradient id="lg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" class="s1"/><stop offset="1" class="s2"/></linearGradient>
+              <clipPath id="tr"><path d="M25 0H175L200 120H0Z"/></clipPath>
+              <filter id="bl"><feGaussianBlur stdDeviation="7"/></filter>
+              <g id="deer" stroke="currentColor">
+                <ellipse rx="17" ry="8" fill="currentColor" stroke="none"/>
+                <path d="M10 -3L20 -16" stroke-width="6" stroke-linecap="round" fill="none"/>
+                <ellipse cx="24" cy="-18" rx="6" ry="3.2" transform="rotate(28 24 -18)" fill="currentColor" stroke="none"/>
+                <path d="M21 -22L19 -35M19 -30L13 -33M20 -26L27 -31M19 -35L23 -40" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                <path d="M-12 4L-13 22M-7 5L-6 22M8 5L9 22M13 4L15 22" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              </g>
+              <g id="dark">
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="4"><path d="M-5 20Q40 32 72 12"/><path d="M30 0Q48 26 20 56"/><path d="M60 8Q92 36 130 18T205 30"/><path d="M112 0Q100 30 150 46Q178 50 205 40"/><path d="M80 0L96 28L70 52"/><path d="M150 0Q140 26 118 42"/><path d="M8 62Q50 46 86 64"/><path d="M192 8Q165 36 176 66"/></g>
+                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-width="2"><path d="M96 28L112 22"/><path d="M20 56L36 62"/><path d="M150 46L158 62"/><path d="M130 18L124 6"/><path d="M70 52L56 60"/><path d="M176 66L186 74"/><path d="M40 30L52 18"/><path d="M118 42L108 54"/></g>
+                <path d="M0 112 L0 112 L2 101 L4 112 L6 112 L8 97 L10 112 L12 112 L14 103 L16 112 L18 112 L20 95 L22 112 L24 112 L26 100 L28 112 L30 112 L32 98 L34 112 L36 112 L38 101 L40 112 L42 112 L44 97 L46 112 L48 112 L50 103 L52 112 L54 112 L56 95 L58 112 L60 112 L62 100 L64 112 L66 112 L68 98 L70 112 L72 112 L74 101 L76 112 L78 112 L80 97 L82 112 L84 112 L86 103 L88 112 L90 112 L92 95 L94 112 L96 112 L98 100 L100 112 L102 112 L104 98 L106 112 L108 112 L110 101 L112 112 L114 112 L116 97 L118 112 L120 112 L122 103 L124 112 L126 112 L128 95 L130 112 L132 112 L134 100 L136 112 L138 112 L140 98 L142 112 L144 112 L146 101 L148 112 L150 112 L152 97 L154 112 L156 112 L158 103 L160 112 L162 112 L164 95 L166 112 L168 112 L170 100 L172 112 L174 112 L176 98 L178 112 L180 112 L182 101 L184 112 L186 112 L188 97 L190 112 L192 112 L194 103 L196 112 L198 112 L200 95 L202 112 L200 120 L0 120Z" fill="currentColor"/>
+                <use href="#deer" transform="translate(62 86)"/>
+                <use href="#deer" transform="translate(138 86) scale(-1 1)"/>
+              </g>
+            </defs>
+            <g clip-path="url(#tr)">
+              <rect width="200" height="120" fill="url(#lg)"/>
+              <ellipse class="bulb" cx="100" cy="72" rx="24" ry="20" fill="#fff" filter="url(#bl)"/>
+              <g style="color:#0a1517"><use href="#dark"/>
+                <path d="M0 0H200V8H0ZM0 112H200V120H0Z" fill="currentColor"/>
+                <path d="M25 0H175L200 120H0Z" fill="none" stroke="currentColor" stroke-width="5"/></g>
+            </g>
+          </svg>
+          <div class="pole"></div>
+          <div class="base"></div>
+          <button type="button" class="cord" id="pullCord" aria-label="Toggle lamp" aria-pressed="true">
+            <span class="cord-line"></span><span class="cord-knob"></span>
+          </button>
+        </div>
+      </div>
+      <div class="visual-text">
+        <h1>Good to see<br><em>you again.</em></h1>
+        <p>A calmer way to get back to what matters.</p>
+      </div>
+    </div>
+
+    <!-- RIGHT: form -->
+    <div class="panel">
+      <p class="hint">Pull the cord to turn on the light.</p>
+      <div class="panel-top">
+        <span class="brand">g.</span>
+        <span class="secure"><span class="dot"></span>SECURE SIGN IN</span>
+      </div>
+
+      <div class="login-box">
+      <div class="heading">
+        <p class="label">WELCOME BACK</p>
+        <h2>Sign in to your<br>little corner.</h2>
+      </div>
+
+      {% if form.non_field_errors %}
+        <div class="error" role="alert">Invalid username or password.</div>
+      {% endif %}
+
+      <form method="post" action="{% url 'login' %}" id="loginForm">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <label for="username">Username</label>
+        <div class="field">
+          <input type="text" id="username" name="username" placeholder="Your username"
+                 autocomplete="username" value="{{ form.username.value|default:'' }}" required>
+        </div>
+
+        <div class="pw-row">
+          <label for="password">Password</label>
+          <button type="button" id="showPassword" aria-pressed="false">Show</button>
+        </div>
+        <div class="field">
+          <input type="password" id="password" name="password" placeholder="Enter your password"
+                 autocomplete="current-password" required>
+        </div>
+
+        <div class="options">
+          <label class="remember">
+            <input type="checkbox" name="remember_me"><span class="box"></span>Keep me signed in
+          </label>
+          <a href="#">Forgot password?</a>
+        </div>
+
+        <button type="submit" class="signin" id="loginButton">
+          <span class="button-text">Sign in</span><span class="spinner"></span>
+        </button>
+      </form>
+
+      <div class="bottom">NEW HERE? <a href="#">Create an account</a></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="page-footer">
+    <span>© {% now "Y" %} GREENHOUSE</span>
+    <span>TAKE A BREATH. YOU'RE HERE.</span>
+  </footer>
+</main>
+</body>
+</html>

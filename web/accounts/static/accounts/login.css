@@ -1,0 +1,155 @@
+/* ---------- Tokens: change --glow to re-colour the whole light ---------- */
+:root{
+  --bg:#081012; --panel:rgba(14,26,29,.72); --line:rgba(150,255,235,.10);
+  --text:#e6f5f2; --muted:#8aa5a1; --accent:#5eead4;
+  --glow:80,230,205;            /* teal-green, as R,G,B */
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:'DM Sans',system-ui,sans-serif;color:var(--text);background:var(--bg);-webkit-font-smoothing:antialiased}
+
+/* ---------- Page ---------- */
+.page{position:relative;isolation:isolate;min-height:100vh;min-height:100dvh;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:16px;padding:24px 16px;overflow:hidden}
+.page::before{content:"";position:absolute;inset:0;z-index:-1;transition:opacity .6s;
+  background:radial-gradient(ellipse 60% 70% at 28% 45%,rgba(var(--glow),.14),transparent 70%),
+             radial-gradient(ellipse 50% 60% at 95% 100%,rgba(56,189,248,.08),transparent 70%)}
+.page.off::before{opacity:.15}
+
+.card{width:min(1000px,100%);min-height:620px;display:grid;grid-template-columns:1.05fr 1fr;overflow:hidden;
+  border-radius:28px;background:var(--panel);border:1px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.5);
+  -webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px)}
+
+/* ---------- Left: lamp ---------- */
+.visual{position:relative;min-height:620px;padding:34px 38px;overflow:hidden;background:linear-gradient(160deg,#0d1a1d,#0a1416)}
+.label{margin:0;display:flex;align-items:center;gap:9px;color:#7fb8ae;font-size:11px;font-weight:700;letter-spacing:.14em}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+
+/* .lamp-area = position/scale (CSS only). .lamp = tilt (JS sets --rx/--ry). They never fight. */
+.lamp-area{position:absolute;left:50%;top:70px;width:260px;height:330px;transform:translateX(-50%)}
+.lamp{position:relative;width:100%;height:100%;transition:transform .2s ease-out;
+  transform:perspective(700px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+
+.glow{position:absolute;left:-70px;top:-70px;width:400px;height:360px;border-radius:50%;filter:blur(16px);transition:opacity .6s;
+  background:radial-gradient(ellipse,rgba(var(--glow),.40),rgba(var(--glow),.12) 45%,transparent 70%)}
+.beam{position:absolute;left:20px;top:120px;width:220px;height:206px;filter:blur(6px);transition:opacity .6s;
+  clip-path:polygon(18% 0,82% 0,100% 100%,0 100%);background:linear-gradient(rgba(var(--glow),.30),transparent)}
+.shade{position:absolute;left:30px;top:0;width:200px;height:120px;overflow:visible;transition:filter .6s;
+  filter:drop-shadow(0 0 22px rgba(var(--glow),.55)) drop-shadow(0 0 70px rgba(var(--glow),.25))}
+.s1{stop-color:#f4fffc;transition:stop-color .6s}
+.s2{stop-color:#8ef0dd;transition:stop-color .6s}
+.bulb{transition:opacity .6s}
+/* the pattern projected on the "wall" behind the lamp */
+.cast{position:absolute;left:-140px;top:-102px;width:540px;height:324px;filter:blur(4px);opacity:.5;
+  transition:opacity .6s;pointer-events:none}
+.pole{position:absolute;left:121px;top:120px;width:18px;height:186px;background:linear-gradient(90deg,#b9c9c6,#eef4f2 45%,#aebdba)}
+.base{position:absolute;left:70px;top:300px;width:120px;height:16px;border-radius:10px;background:linear-gradient(#eef4f2,#b4c3c0)}
+
+.cord{position:absolute;left:182px;top:118px;width:20px;height:150px;padding:0;border:0;background:none;cursor:pointer;
+  transform-origin:top center;transition:transform .22s}
+.cord-line{position:absolute;left:9px;top:0;width:2px;height:124px;background:#6f8582}
+.cord-knob{position:absolute;left:3px;bottom:6px;width:14px;height:20px;border-radius:50% 50% 45% 45%;
+  background:linear-gradient(135deg,#a8f0e0,#2fa397);box-shadow:0 0 10px rgba(var(--glow),.5);transition:box-shadow .6s}
+.cord.pulling{transform:translateY(14px)}
+
+/* Lamp OFF: one class on .page does everything */
+.page.off .glow,.page.off .beam{opacity:0}
+.page.off .shade{filter:none}
+.page.off .s1{stop-color:#4a5c59}
+.page.off .s2{stop-color:#2f3f3d}
+.page.off .bulb,.page.off .cast{opacity:0}
+.page.off .cord-knob{box-shadow:none}
+
+.visual-text{position:absolute;left:38px;right:30px;bottom:38px}
+.visual-text h1{margin:0;font:500 clamp(36px,4.2vw,52px)/1.08 'Playfair Display',Georgia,serif;letter-spacing:-.04em}
+.visual-text em{color:var(--accent)}
+.visual-text p{margin:16px 0 0;color:var(--muted);font-size:14px}
+
+/* ---------- Right: form ---------- */
+.panel{position:relative;display:flex;flex-direction:column;padding:36px clamp(26px,4vw,52px) 28px;background:rgba(10,20,22,.55)}
+.panel-top{display:flex;justify-content:space-between;align-items:center}
+.brand{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;color:#05211d;
+  background:linear-gradient(135deg,#7ff0dd,#2fb3a5);font:500 22px 'Playfair Display',serif}
+.secure{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.12em}
+.heading{margin:44px 0 26px}
+.heading .label{margin-bottom:14px}
+.heading h2{margin:0;font:500 clamp(30px,3.2vw,38px)/1.15 'Playfair Display',Georgia,serif;letter-spacing:-.03em}
+
+form{display:flex;flex-direction:column}
+label{color:#b3cfca;font-size:12px;font-weight:700}
+form>label,.pw-row label{margin-bottom:8px}
+.field{margin-bottom:20px}
+.field input{width:100%;height:50px;padding:0 16px;border:1px solid var(--line);border-radius:12px;outline:none;
+  background:rgba(255,255,255,.04);color:var(--text);font:inherit;font-size:16px;  /* 16px stops iPhone zoom */
+  transition:border-color .2s,box-shadow .2s,background .2s}
+.field input::placeholder{color:#5f7a76}
+.field input:focus{border-color:rgba(var(--glow),.6);background:rgba(255,255,255,.07);box-shadow:0 0 0 4px rgba(var(--glow),.12)}
+.pw-row{display:flex;justify-content:space-between;align-items:center}
+.pw-row button{border:0;background:none;color:var(--accent);font:inherit;font-size:12px;cursor:pointer}
+
+.options{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:2px 0 24px;font-size:12px}
+.remember{position:relative;display:flex;align-items:center;gap:8px;color:var(--muted);font-weight:400;cursor:pointer}
+.remember input{position:absolute;opacity:0;width:16px;height:16px;margin:0}   /* hidden but keyboard-reachable */
+.box{width:16px;height:16px;border:1px solid #4b6762;border-radius:4px}
+.remember input:checked+.box{background:var(--accent);border-color:var(--accent)}
+.remember input:checked+.box::after{content:"✓";display:block;color:#05211d;font-size:11px;line-height:14px;text-align:center}
+.remember input:focus-visible+.box{outline:2px solid var(--accent);outline-offset:2px}
+.options a,.bottom a{color:var(--accent);text-decoration:none}
+
+.signin{position:relative;min-height:52px;display:flex;align-items:center;justify-content:center;gap:10px;border:0;
+  border-radius:12px;color:#04211d;font:700 15px 'DM Sans',sans-serif;cursor:pointer;
+  background:linear-gradient(115deg,#2aa89a 0%,#a6f5e4 30%,#35b4a8 55%,#b4f8ea 78%,#2a9d92 100%);
+  box-shadow:0 10px 24px rgba(var(--glow),.22);transition:transform .2s,box-shadow .2s,opacity .2s}
+.signin:hover{transform:translateY(-2px);box-shadow:0 14px 30px rgba(var(--glow),.3)}
+.signin:disabled{opacity:.8;cursor:progress;transform:none}
+.spinner{display:none;width:16px;height:16px;border:2px solid rgba(4,33,29,.3);border-top-color:#04211d;border-radius:50%;animation:spin .7s linear infinite}
+.signin.loading .spinner{display:block}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+:is(.signin,.cord,.pw-row button,a):focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.error{padding:11px 14px;margin-bottom:18px;border-radius:10px;color:#ffb4a8;background:rgba(255,120,100,.1);
+  border:1px solid rgba(255,140,120,.25);font-size:13px}
+.bottom{margin-top:auto;padding-top:22px;border-top:1px solid var(--line);color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.08em}
+.bottom a{margin-left:6px;letter-spacing:0;font-size:13px}
+.page-footer{width:min(1000px,100%);display:flex;justify-content:space-between;color:#6a8682;font-size:11px;letter-spacing:.1em}
+
+/* ---------- Form reveals when the lamp is ON ---------- */
+.page.off .login-box{opacity:0;transform:translateY(12px);pointer-events:none;
+  visibility:hidden;                       /* also removes it from Tab order + screen readers */
+  transition:opacity .4s,transform .4s,visibility 0s .4s}
+.hint{position:absolute;left:0;right:0;top:50%;margin:0;text-align:center;color:var(--muted);font-size:14px;
+  opacity:0;pointer-events:none;transition:opacity .4s}
+.page.off .hint{opacity:1;transition-delay:.3s}
+@media (prefers-reduced-motion:no-preference){.page.off .cord-knob{animation:beckon 1.8s ease-in-out infinite}}
+@keyframes beckon{50%{box-shadow:0 0 14px 2px rgba(var(--glow),.6)}}
+
+/* ---------- Mobile ---------- */
+@media (max-width:760px){
+  .card{grid-template-columns:1fr;max-width:480px;min-height:0;border-radius:22px}
+  .visual{min-height:380px;padding:24px}
+  .lamp-area{left:70%;top:40px;transform:translateX(-50%) scale(.7);transform-origin:top center}
+  .visual-text{left:24px;bottom:24px}
+  .visual-text h1{font-size:34px}
+  .visual-text p{display:none}
+  .panel{padding:26px 24px 22px}
+  .heading{margin-top:32px}
+}
+
+/* ---------- Login box: lit from the lamp side, shadow falls on the opposite side ---------- */
+.panel{--sx:22px;--sy:16px;--spill:90deg}      /* shadow offset + light direction (lamp is on the left) */
+.panel::before{content:"";position:absolute;inset:0;pointer-events:none;transition:opacity .6s;
+  background:linear-gradient(var(--spill),rgba(var(--glow),.10),transparent 55%)}   /* light spilling from the lamp */
+.page.off .panel::before{opacity:0}
+.login-box{position:relative;flex:1;display:flex;flex-direction:column;margin-top:22px;padding:26px 26px 20px;
+  border-radius:20px;background:rgba(255,255,255,.035);border:1px solid var(--line);
+  border-left-color:rgba(var(--glow),.35);                                            /* lit edge, facing the lamp */
+  box-shadow:var(--sx) var(--sy) 38px -4px rgba(0,0,0,.7),inset 1px 0 0 rgba(var(--glow),.12);  /* shadow, away from it */
+  transition:opacity .6s ease .15s,transform .6s ease .15s}
+.login-box .heading{margin:0 0 22px}
+.login-box .heading h2{font-size:clamp(28px,3vw,34px)}
+
+@media (max-width:760px){                      /* stacked layout: lamp is on top, so light and shadow go vertical */
+  .panel{--sx:0px;--sy:24px;--spill:180deg}
+  .login-box{padding:22px 20px 18px;border-left-color:var(--line);border-top-color:rgba(var(--glow),.35)}
+}
