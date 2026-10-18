@@ -2,10 +2,16 @@
 import javax.swing.*; 
  
 public class Main { 
-    public static void main(String[] args) { 
- 
-        // ===== GUI TEST MODE (active) ===== 
-        JFrame frame = new JFrame("LostFound"); 
+    public static void main(String[] args) {
+
+    // Stage 4: sign in through the browser first; quit if cancelled or failed
+    String username = DesktopLogin.signIn();
+    if (username == null) {
+        System.exit(0);
+    }
+
+    // ===== GUI TEST MODE (active) =====
+    JFrame frame = new JFrame("LostFound - signed in as " + username);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); 
  
         //ItemManager itemManager = new ItemManager();
