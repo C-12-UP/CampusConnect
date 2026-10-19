@@ -17,7 +17,7 @@ public class Main {
         //ItemManager itemManager = new ItemManager();
         
         ItemManager manager = new ItemManager(); 
-        SidebarPanel sidebar = new SidebarPanel(manager); 
+        SidebarPanel sidebar = new SidebarPanel(manager, username); 
 
         frame.setContentPane(sidebar); 
  

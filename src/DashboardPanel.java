@@ -1,11 +1,13 @@
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
 
 public class DashboardPanel extends JPanel {
 
     private ItemManager itemManager;
+
+    private String username;
 
     private JButton lostItemsButton;
     private JButton foundItemsButton;
@@ -20,8 +22,9 @@ public class DashboardPanel extends JPanel {
 
     private static final Color BG_COLOR = new Color(255, 231, 233);
 
-    public DashboardPanel(ItemManager itemManager) {
+    public DashboardPanel(ItemManager itemManager, String username) {
         this.itemManager = itemManager;
+        this.username = username;
         initComponents();
     }
 
@@ -72,7 +75,7 @@ public class DashboardPanel extends JPanel {
         profilePanel.setBackground(new Color(255, 255, 204));
         profilePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        JLabel profileLabel = new JLabel("Dhyay", loadIcon("Profile.png"), JLabel.CENTER);
+        JLabel profileLabel = new JLabel(username, loadIcon("Profile.png"), JLabel.CENTER);
         profileLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         profilePanel.add(profileLabel);
 
@@ -159,8 +162,8 @@ public class DashboardPanel extends JPanel {
 
     public void updateCounts() {
 
-        lostCountLabel.setText("COUNT: " + itemManager.lostItem.size());
-        foundCountLabel.setText("COUNT: " + itemManager.foundItem.size());
-        //claimedCountLabel.setText("COUNT: " + itemManager.claimedItem.size());
+        lostCountLabel.setText("COUNT: " + itemManager.openLostCount());
+        foundCountLabel.setText("COUNT: " + itemManager.openFoundCount());
+        claimedCountLabel.setText("COUNT: " + itemManager.getClaimedItems().size());
     }
 }

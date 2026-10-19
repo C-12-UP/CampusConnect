@@ -13,6 +13,7 @@ public class BrowseItem extends JPanel {
     private JComboBox<String> categoryBox;
 
     private ItemManager itemManager;
+    private String username;
 
     private final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -23,9 +24,10 @@ public class BrowseItem extends JPanel {
     //private JPanel categoryPanel;
     private JPanel itemPanel;
 
-    public BrowseItem(ItemManager itemManager) {
+    public BrowseItem(ItemManager itemManager, String username) {
 
         this.itemManager = itemManager;
+        this.username = username;
 
         // Main panel
         setBackground(Color.WHITE);
@@ -52,12 +54,12 @@ public class BrowseItem extends JPanel {
         profilePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         profilePanel.setBackground(Color.ORANGE);
 
-        profileLabel = new JLabel("Dhyay");
+        profileLabel = new JLabel(username);
 
         // Profile image
         try {
             ImageIcon icon = new ImageIcon(
-                getClass().getResource("/gui/Image/Profile.png")
+                getClass().getResource("/Image/Profile.png")
             );
 
             Image image = icon.getImage().getScaledInstance(
@@ -167,11 +169,11 @@ public class BrowseItem extends JPanel {
         if (itemManager != null) {
 
             for (LostItem item : itemManager.lostItem) {
-                itemPanel.add(createItemCard(item));
+                if (item.status.equals("OPEN")) itemPanel.add(createItemCard(item));
             }
 
             for (FoundItem item : itemManager.foundItem) {
-                itemPanel.add(createItemCard(item));
+                if (item.status.equals("OPEN")) itemPanel.add(createItemCard(item));
             }
         }
 
@@ -204,6 +206,12 @@ public class BrowseItem extends JPanel {
         itemCard.add(new JLabel("Reported by: " + item.reporterName));
         itemCard.add(new JLabel("Contact: " + item.contactInfo));
 
+        JButton claimButton = new JButton("Mark as claimed");
+        claimButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        claimButton.addActionListener(e -> claimClicked(item));
+        itemCard.add(Box.createVerticalStrut(6));
+        itemCard.add(claimButton);
+
         itemCard.setBorder(BorderFactory.createCompoundBorder
         (
             BorderFactory.createLineBorder(new Color(200,200,200)),
@@ -227,6 +235,24 @@ public class BrowseItem extends JPanel {
         System.out.println("Profile clicked");
 
         // Add profile page logic here later
+    }
+    private void claimClicked(Item item) {
+        JTextField nameField = new JTextField();
+        JTextField contactField = new JTextField();
+        Object[] form = { "Claimer's name:", nameField, "Claimer's contact:", contactField };
+
+        int choice = JOptionPane.showConfirmDialog(this, form, "Mark as claimed", JOptionPane.OK_CANCEL_OPTION);
+        if (choice != JOptionPane.OK_OPTION) return;
+
+        String name = nameField.getText().trim();
+        String contact = contactField.getText().trim();
+        if (name.isEmpty() || contact.isEmpty()) {
+         JOptionPane.showMessageDialog(this, "Please enter both name and contact.");
+         return;
+        }
+
+        itemManager.claimItem(item, name, contact);
+        displayItems();   // refresh: the claimed item disappears from Browse
     }
 
     private void searchFieldClicked() {
@@ -267,7 +293,7 @@ public class BrowseItem extends JPanel {
 
             frame.setLocationRelativeTo(null);
 
-            frame.setContentPane(new BrowseItem(null));
+            frame.setContentPane(new BrowseItem(null, "Guest"));
 
             frame.setVisible(true);
         });

@@ -36,12 +36,15 @@ public class SidebarPanel extends JPanel {
     private final Map<String, JLabel> menuItems = new LinkedHashMap<>();
     private String activeCard;
     private ItemManager itemManager;
+    private String username;
     private BrowseItem browseItem;
+    private ClaimedItem claimedItem;
     private DashboardPanel dashboardPanel;
 
 
-    public SidebarPanel(ItemManager itemManager) {
+    public SidebarPanel(ItemManager itemManager, String username) {
         this.itemManager = itemManager;
+        this.username = username;
         initComponents();
     }
 
@@ -55,15 +58,18 @@ public class SidebarPanel extends JPanel {
         //DashboardPanel is the class name which is getting open 
         //:: new means that create that thing when it is needed 
         addPage(DASHBOARD, () -> {
-            dashboardPanel = new DashboardPanel(itemManager);
+            dashboardPanel = new DashboardPanel(itemManager, username);
             return dashboardPanel;
         });
-        addPage(REPORT_ITEM, () -> new ReportItem(itemManager));
+        addPage(REPORT_ITEM, () -> new ReportItem(itemManager, username));
         addPage(BROWSE_ITEM, () -> {
-            browseItem = new BrowseItem(itemManager);
+            browseItem = new BrowseItem(itemManager, username);
             return browseItem;
         });
-        addPage(CLAIMED_ITEM, () -> new ClaimedItem(itemManager));
+        addPage(CLAIMED_ITEM, () -> {
+            claimedItem = new ClaimedItem(itemManager, username);
+            return claimedItem;
+        });
 
         // ---------- Sidebar ----------
         JPanel sidebar = new JPanel();
@@ -177,6 +183,9 @@ public class SidebarPanel extends JPanel {
         if (card.equals(BROWSE_ITEM) && browseItem != null) {
             browseItem.displayItems();
         }
+        if (card.equals(CLAIMED_ITEM) && claimedItem != null) {
+            claimedItem.displayClaimed();
+    }
 
         cardLayout.show(contentArea, card);
         activeCard = card;
@@ -218,7 +227,7 @@ public class SidebarPanel extends JPanel {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("VIVIDA");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new SidebarPanel(new ItemManager()));
+            frame.setContentPane(new SidebarPanel(new ItemManager(), "Guest"));
             frame.setSize(950, 600);
             frame.setLocationRelativeTo(null);  
             frame.setVisible(true);

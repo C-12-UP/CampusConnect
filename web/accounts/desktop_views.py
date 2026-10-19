@@ -2,9 +2,11 @@ import hashlib
 import re
 import secrets
 from datetime import timedelta
+from urllib.parse import quote
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth import logout
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.shortcuts import redirect
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
@@ -21,9 +23,8 @@ def _hash(code):
     return hashlib.sha256(code.encode()).hexdigest()
 
 
-@login_required  # logged-out users go to the lamp page first, then come back here
 def desktop_login(request):
-    """Endpoint A: validate port/state, mint a one-time code, send it to the desktop app."""
+    """Endpoint A: validate port/state, force a fresh sign-in, mint a one-time code, send it to the desktop app."""
     port = request.GET.get("port", "")
     state = request.GET.get("state", "")
 
@@ -32,6 +33,19 @@ def desktop_login(request):
         return HttpResponse("Invalid port.", status=400, content_type="text/plain")
     if not STATE_RE.fullmatch(state):
         return HttpResponse("Invalid state.", status=400, content_type="text/plain")
+
+    # First visit: force a fresh sign-in so the lamp page always appears
+    if request.GET.get("fresh") != "1":
+        if request.user.is_authenticated:
+            logout(request)
+        params = request.GET.copy()
+        params["fresh"] = "1"
+        next_url = request.path + "?" + params.urlencode()
+        return redirect("/login/?next=" + quote(next_url))
+
+    # Came back with fresh=1 but not signed in: send to login again
+    if not request.user.is_authenticated:
+        return redirect("/login/?next=" + quote(request.get_full_path()))
 
     code = secrets.token_urlsafe(32)  # the secret; only the app ever sees it
     DesktopLoginCode.objects.create(user=request.user, code_hash=_hash(code))

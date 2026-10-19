@@ -1,7 +1,7 @@
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;                  
 import java.util.Date;
+import javax.swing.*;
 
 public class ReportItem extends javax.swing.JPanel {
 
@@ -19,10 +19,13 @@ public class ReportItem extends javax.swing.JPanel {
 
     private ItemManager itemManager;
 
+    private String username; 
+
     private static final Color BG_COLOR = new Color(255, 231, 233);
 
-    public ReportItem(ItemManager itemManager) {
+    public ReportItem(ItemManager itemManager, String username) {
         this.itemManager = itemManager;
+        this.username = username;
         initComponents();
     }
 
@@ -54,7 +57,7 @@ public class ReportItem extends javax.swing.JPanel {
 
         JPanel profilePanel = new JPanel();
         profilePanel.setBackground(Color.orange);
-        JLabel profileLabel = new JLabel("Dhyay", loadIcon("Profile.png"), JLabel.CENTER);
+        JLabel profileLabel = new JLabel(username, loadIcon("Profile.png"), JLabel.CENTER);
         profileLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         profilePanel.add(profileLabel);
 
@@ -93,7 +96,7 @@ public class ReportItem extends javax.swing.JPanel {
         form.add(buildFieldBlock("Date*", dateSpinner), gbc);
 
         // Row 2: Reporter name + Contact (NEW)
-        reporterNameField = new JTextField();
+        reporterNameField = new JTextField(username);
         gbc.gridx = 0; gbc.gridy = 2; gbc.insets = new Insets(0, 0, 15, 20);
         form.add(buildFieldBlock("Your Name*", reporterNameField), gbc);
 
