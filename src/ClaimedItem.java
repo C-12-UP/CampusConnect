@@ -223,8 +223,8 @@ private JPanel createClaimedCard(Item item) {
         card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
         card.setBackground(Color.WHITE);
         card.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(200, 200, 200)),
-            BorderFactory.createEmptyBorder(10, 12, 10, 12)));
+        BorderFactory.createLineBorder(new Color(200, 200, 200)),
+        BorderFactory.createEmptyBorder(10, 12, 10, 12)));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         card.add(new JLabel("Item: " + item.itemName + "  (ID " + item.itemId + ")"));
@@ -243,6 +243,6 @@ private JPanel createClaimedCard(Item item) {
                 "Profile clicked"
         );
 
-        // Add profile page logic later
+
     }
 }

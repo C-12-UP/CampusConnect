@@ -4,7 +4,7 @@ import java.util.Date;
 // Manages the lists of lost items
 public class ItemManager {
 
-    int nextItemId = 1; // Unique ID for each item
+    ItemDatabase db = new ItemDatabase();   // the saved data lives here
     /* ArrayList is the list of array, 
        LostItem is the data type of the list,
        lostItem is the object name (just like Scanner),
@@ -14,11 +14,22 @@ public class ItemManager {
        the name of the parameter is item and its data type is LostItem */
     ArrayList<LostItem> lostItem = new ArrayList<>();
 
+    ItemManager() {
+     // When the app starts, load everything saved in earlier runs
+     for (Item item : db.loadAll()) {
+        if (item instanceof LostItem) {
+            lostItem.add((LostItem) item);
+        } else {
+            foundItem.add((FoundItem) item);
+        }
+    }
+    }
+
     void addLostItem(LostItem item) 
     {
-        item.itemId = nextItemId;
-        nextItemId++;
-
+        int id = db.insert(item, "LOST");
+        if (id == -1) return;      // saving failed, so don't show it as if it worked
+        item.itemId = id;
         lostItem.add(item);
     }
 
@@ -27,9 +38,9 @@ public class ItemManager {
 
     void addFoundItem(FoundItem item)
     {
-        item.itemId = nextItemId;
-        nextItemId++;
-
+        int id = db.insert(item, "FOUND");
+        if (id == -1) return;
+        item.itemId = id;
         foundItem.add(item);
     }
 
@@ -39,6 +50,7 @@ public class ItemManager {
         item.claimedByName = name;
         item.claimedByContact = contact;
         item.claimedDate = new Date();
+        db.markClaimed(item);
     }
 
     // Every claimed item, lost and found together.
