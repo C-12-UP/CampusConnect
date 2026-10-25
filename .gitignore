@@ -1,3 +1,4 @@
+git commit -m "Store items in SQLite, add claimed items and run instructions"
 # Compiled class file
 *.class
 

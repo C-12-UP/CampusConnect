@@ -13,6 +13,7 @@ public class BrowseItem extends JPanel {
     private JComboBox<String> categoryBox;
 
     private ItemManager itemManager;
+    private String username;
 
     private final SimpleDateFormat fmt = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -23,9 +24,10 @@ public class BrowseItem extends JPanel {
     //private JPanel categoryPanel;
     private JPanel itemPanel;
 
-    public BrowseItem(ItemManager itemManager) {
+    public BrowseItem(ItemManager itemManager, String username) {
 
         this.itemManager = itemManager;
+        this.username = username;
 
         // Main panel
         setBackground(Color.WHITE);
@@ -52,12 +54,12 @@ public class BrowseItem extends JPanel {
         profilePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         profilePanel.setBackground(Color.ORANGE);
 
-        profileLabel = new JLabel("Dhyay");
+        profileLabel = new JLabel(username);
 
         // Profile image
         try {
             ImageIcon icon = new ImageIcon(
-                getClass().getResource("/gui/Image/Profile.png")
+                getClass().getResource("/Image/Profile.png")
             );
 
             Image image = icon.getImage().getScaledInstance(
@@ -91,13 +93,10 @@ public class BrowseItem extends JPanel {
         searchField = new JTextField("Search by name, etc.", 15);
         searchField.setFont(new Font("Segoe UI", Font.PLAIN, 11));
 
-        String[] categories = {
-            "All Categories",
-            "Electronics",
-            "Books",
-            "Clothing",
-            "Accessories"
-        };
+        // "All Categories" first, then the same list Report Item uses
+        String[] categories = new String[ItemManager.CATEGORIES.length + 1];
+        categories[0] = "All Categories";
+        System.arraycopy(ItemManager.CATEGORIES, 0, categories, 1, ItemManager.CATEGORIES.length);
 
         categoryBox = new JComboBox<>(categories);
         categoryBox.setFont(new Font("Segoe UI", Font.PLAIN, 10));
@@ -155,6 +154,12 @@ public class BrowseItem extends JPanel {
         });
 
         categoryBox.addActionListener(e -> categorySelected());
+        // Re-filter on every keystroke: typing, deleting, or pasting
+        searchField.getDocument().addDocumentListener(new javax.swing.event.DocumentListener() {
+        public void insertUpdate(javax.swing.event.DocumentEvent e)  { displayItems(); }
+        public void removeUpdate(javax.swing.event.DocumentEvent e)  { displayItems(); }
+        public void changedUpdate(javax.swing.event.DocumentEvent e) { displayItems(); }
+        });
 
         displayItems();
 
@@ -163,16 +168,27 @@ public class BrowseItem extends JPanel {
     public void displayItems() {
 
         itemPanel.removeAll();
+        int shown = 0;
 
         if (itemManager != null) {
 
             for (LostItem item : itemManager.lostItem) {
-                itemPanel.add(createItemCard(item));
+                if (item.status.equals("OPEN") && matchesFilter(item)) {
+                    itemPanel.add(createItemCard(item));
+                    shown++;
+                }
             }
 
             for (FoundItem item : itemManager.foundItem) {
-                itemPanel.add(createItemCard(item));
+                if (item.status.equals("OPEN") && matchesFilter(item)) {
+                    itemPanel.add(createItemCard(item));
+                    shown++;
+                }
             }
+        }
+
+        if (shown == 0) {
+            itemPanel.add(new JLabel("No items match your search."));
         }
 
         itemPanel.revalidate();
@@ -204,6 +220,12 @@ public class BrowseItem extends JPanel {
         itemCard.add(new JLabel("Reported by: " + item.reporterName));
         itemCard.add(new JLabel("Contact: " + item.contactInfo));
 
+        JButton claimButton = new JButton("Mark as claimed");
+        claimButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        claimButton.addActionListener(e -> claimClicked(item));
+        itemCard.add(Box.createVerticalStrut(6));
+        itemCard.add(claimButton);
+
         itemCard.setBorder(BorderFactory.createCompoundBorder
         (
             BorderFactory.createLineBorder(new Color(200,200,200)),
@@ -222,11 +244,53 @@ public class BrowseItem extends JPanel {
     // EVENT METHODS
     // =========================
 
+    // True if the item passes both the category choice and the search text.
+    private boolean matchesFilter(Item item) {
+        String search = searchField.getText().trim().toLowerCase();
+        if (search.equals("search by name, etc.")) search = "";   // ignore the placeholder text
+
+        String category = (String) categoryBox.getSelectedItem();
+        if (!category.equals("All Categories") && !category.equals(item.category)) {
+            return false;
+        }
+
+        if (search.isEmpty()) return true;
+
+        return contains(item.itemName, search)
+            || contains(item.description, search)
+            || contains(item.locationFound, search)
+            || contains(item.category, search);
+    }
+
+    // Case-insensitive "contains" that doesn't crash on a missing value.
+    private boolean contains(String text, String search) {
+        return text != null && text.toLowerCase().contains(search);
+    }
+
+
     private void profileClicked() {
 
         System.out.println("Profile clicked");
 
         // Add profile page logic here later
+    }
+    private void claimClicked(Item item) {
+        JTextField nameField = new JTextField();
+        JTextField contactField = new JTextField();
+        Object[] form = { "Claimer's name:", nameField, "Claimer's contact:", contactField };
+
+        int choice = JOptionPane.showConfirmDialog(this, form, "Mark as claimed", JOptionPane.OK_CANCEL_OPTION);
+        if (choice != JOptionPane.OK_OPTION) return;
+
+        String name = nameField.getText().trim();
+        String contact = contactField.getText().trim();
+        if (name.isEmpty() || contact.isEmpty()) {
+         JOptionPane.showMessageDialog(this, "Please enter both name and contact.");
+         return;
+        }
+
+        itemManager.claimItem(item, name, contact);
+        displayItems();   // refresh: the claimed item disappears from Browse
     }
 
     private void searchFieldClicked() {
@@ -238,15 +302,7 @@ public class BrowseItem extends JPanel {
     }
 
     private void categorySelected() {
-
-        String selectedCategory =
-                (String) categoryBox.getSelectedItem();
-
-        System.out.println(
-                "Selected Category: " + selectedCategory
-        );
-
-        // Add filtering logic here later
+        displayItems();   // re-draw the list using the new category
     }
 
     // =========================
@@ -267,7 +323,7 @@ public class BrowseItem extends JPanel {
 
             frame.setLocationRelativeTo(null);
 
-            frame.setContentPane(new BrowseItem(null));
+            frame.setContentPane(new BrowseItem(null, "Guest"));
 
             frame.setVisible(true);
         });

@@ -12,6 +12,10 @@ public class Item {
     int itemId;
     String reporterName;
     String contactInfo;
+    String status = "OPEN";      // "OPEN" or "CLAIMED"
+    String claimedByName;
+    String claimedByContact;
+    Date claimedDate;
 
     Item() {
         //Its an empty default constructor which is there.

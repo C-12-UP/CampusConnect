@@ -1,11 +1,14 @@
-import javax.swing.*;
-import javax.swing.border.BevelBorder;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import javax.swing.*;
+import javax.swing.border.BevelBorder;
+import java.util.ArrayList;
 
 public class DashboardPanel extends JPanel {
 
     private ItemManager itemManager;
+
+    private String username;
 
     private JButton lostItemsButton;
     private JButton foundItemsButton;
@@ -20,8 +23,9 @@ public class DashboardPanel extends JPanel {
 
     private static final Color BG_COLOR = new Color(255, 231, 233);
 
-    public DashboardPanel(ItemManager itemManager) {
+    public DashboardPanel(ItemManager itemManager, String username) {
         this.itemManager = itemManager;
+        this.username = username;
         initComponents();
     }
 
@@ -44,11 +48,19 @@ public class DashboardPanel extends JPanel {
         recentLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         topSection.add(recentLabel);
 
+        //recentItemsPanel = new JPanel();
+        //recentItemsPanel.setBackground(Color.WHITE);
+
+        //add(topSection, BorderLayout.NORTH);
+        //add(recentItemsPanel, BorderLayout.CENTER);
         recentItemsPanel = new JPanel();
+        recentItemsPanel.setLayout(new BoxLayout(recentItemsPanel, BoxLayout.Y_AXIS));
         recentItemsPanel.setBackground(Color.WHITE);
+        recentItemsPanel.setBorder(BorderFactory.createEmptyBorder(10, 12, 10, 12));
 
         add(topSection, BorderLayout.NORTH);
-        add(recentItemsPanel, BorderLayout.CENTER);
+        add(new JScrollPane(recentItemsPanel), BorderLayout.CENTER);
+
     }
 
     private JPanel buildHeader() {
@@ -72,7 +84,7 @@ public class DashboardPanel extends JPanel {
         profilePanel.setBackground(new Color(255, 255, 204));
         profilePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
-        JLabel profileLabel = new JLabel("Dhyay", loadIcon("Profile.png"), JLabel.CENTER);
+        JLabel profileLabel = new JLabel(username, loadIcon("Profile.png"), JLabel.CENTER);
         profileLabel.setFont(new Font("SansSerif", Font.BOLD, 14));
         profilePanel.add(profileLabel);
 
@@ -157,10 +169,56 @@ public class DashboardPanel extends JPanel {
         //((CardLayout) getRootPane().getLayout()).show(getRootPane(), "Claimed");
     }
 
+    private void refreshRecentItems() {
+        recentItemsPanel.removeAll();
+
+        // Collect every open item, lost and found together.
+        ArrayList<Item> recent = new ArrayList<>();
+        for (LostItem item : itemManager.lostItem) {
+            if (item.status.equals("OPEN")) recent.add(item);
+        }
+        for (FoundItem item : itemManager.foundItem) {
+            if (item.status.equals("OPEN")) recent.add(item);
+        }
+
+        // Newest first: a higher itemId means it was reported later.
+        recent.sort((a, b) -> b.itemId - a.itemId);
+
+        if (recent.isEmpty()) {
+            JLabel empty = new JLabel("No open items yet.");
+            empty.setAlignmentX(Component.LEFT_ALIGNMENT);
+            recentItemsPanel.add(empty);
+        }
+
+        int shown = 0;
+        for (Item item : recent) {
+            if (shown == 8) break;   // overview only: show the 8 newest
+            boolean lost = item instanceof LostItem;
+
+            JPanel row = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 2));
+            row.setBackground(Color.WHITE);
+            row.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+         JLabel tag = new JLabel(lost ? "LOST" : "FOUND");
+            tag.setFont(new Font("SansSerif", Font.BOLD, 11));
+            tag.setForeground(lost ? Color.RED : new Color(0, 102, 0));
+
+            row.add(tag);
+            row.add(new JLabel(item.itemName));
+            row.setMaximumSize(new Dimension(Integer.MAX_VALUE, row.getPreferredSize().height));
+
+            recentItemsPanel.add(row);
+            shown++;
+        }
+
+        recentItemsPanel.revalidate();
+        recentItemsPanel.repaint();
+    }
     public void updateCounts() {
 
-        lostCountLabel.setText("COUNT: " + itemManager.lostItem.size());
-        foundCountLabel.setText("COUNT: " + itemManager.foundItem.size());
-        //claimedCountLabel.setText("COUNT: " + itemManager.claimedItem.size());
+        lostCountLabel.setText("COUNT: " + itemManager.openLostCount());
+        foundCountLabel.setText("COUNT: " + itemManager.openFoundCount());
+        claimedCountLabel.setText("COUNT: " + itemManager.getClaimedItems().size());
+        refreshRecentItems();
     }
 }

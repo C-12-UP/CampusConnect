@@ -1,5 +1,5 @@
-import javax.swing.*;
 import java.awt.*;
+import javax.swing.*;
 
 public class ClaimedItem extends JPanel {
 
@@ -13,10 +13,12 @@ public class ClaimedItem extends JPanel {
     private JPanel claimedPanel;
 
     private ItemManager itemManager;
+    private String username;
 
-    public ClaimedItem(ItemManager itemManager) {
+    public ClaimedItem(ItemManager itemManager, String username) {
 
         this.itemManager = itemManager;
+        this.username = username;
 
         // Main panel
         setBackground(Color.WHITE);
@@ -62,13 +64,13 @@ public class ClaimedItem extends JPanel {
 
         profilePanel.setBackground(Color.ORANGE);
 
-        profileLabel = new JLabel("Dhyay");
+        profileLabel = new JLabel(username);
 
         try {
 
             ImageIcon icon = new ImageIcon(
                     getClass().getResource(
-                            "/gui/Image/Profile.png"
+                            "/Image/Profile.png"
                     )
             );
 
@@ -144,6 +146,8 @@ public class ClaimedItem extends JPanel {
         // =========================
 
         claimedPanel = new JPanel();
+        claimedPanel.setLayout(new BoxLayout(claimedPanel, BoxLayout.Y_AXIS));
+        claimedPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         claimedPanel.setBackground(
                 new Color(255, 231, 233)
@@ -179,7 +183,7 @@ public class ClaimedItem extends JPanel {
         );
 
         add(
-                claimedPanel,
+                new JScrollPane(claimedPanel),
                 BorderLayout.CENTER
         );
 
@@ -200,6 +204,38 @@ public class ClaimedItem extends JPanel {
                 }
         );
     }
+    public void displayClaimed() {
+    claimedPanel.removeAll();
+
+    if (itemManager != null) {
+        for (Item item : itemManager.getClaimedItems()) {
+            claimedPanel.add(createClaimedCard(item));
+            claimedPanel.add(Box.createVerticalStrut(10));
+        }
+    }
+
+        claimedPanel.revalidate();
+        claimedPanel.repaint();
+        }
+
+private JPanel createClaimedCard(Item item) {
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(Color.WHITE);
+        card.setBorder(BorderFactory.createCompoundBorder(
+        BorderFactory.createLineBorder(new Color(200, 200, 200)),
+        BorderFactory.createEmptyBorder(10, 12, 10, 12)));
+        card.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        card.add(new JLabel("Item: " + item.itemName + "  (ID " + item.itemId + ")"));
+        card.add(new JLabel("Type: " + (item instanceof LostItem ? "LOST" : "FOUND")));
+        card.add(new JLabel("Claimed by: " + item.claimedByName));
+        card.add(new JLabel("Contact: " + item.claimedByContact));
+        card.add(new JLabel("Claimed on: " + new java.text.SimpleDateFormat("dd-MM-yyyy").format(item.claimedDate)));
+
+        card.setMaximumSize(new Dimension(Integer.MAX_VALUE, card.getPreferredSize().height));
+        return card;
+}
 
     private void profileClicked() {
 
@@ -207,6 +243,6 @@ public class ClaimedItem extends JPanel {
                 "Profile clicked"
         );
 
-        // Add profile page logic later
+
     }
 }
